@@ -62,12 +62,18 @@ EXPORT struct cedrus *cedrus_open(void)
 	if (ve.regs == MAP_FAILED)
 		goto close;
 
-	ve.allocator = cedrus_allocator_ve_new(ve.fd, &info);
+#ifdef USE_UMP
+	ve.allocator = cedrus_allocator_ump_new();
 	if (!ve.allocator)
+#endif
 	{
-		ve.allocator = cedrus_allocator_ion_new();
+		ve.allocator = cedrus_allocator_ve_new(ve.fd, &info);
 		if (!ve.allocator)
-			goto unmap;
+		{
+			ve.allocator = cedrus_allocator_ion_new();
+			if (!ve.allocator)
+				goto unmap;
+		}
 	}
 
 	ioctl(ve.fd, IOCTL_ENGINE_REQ, 0);

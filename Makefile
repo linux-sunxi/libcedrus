@@ -10,6 +10,12 @@ prefix ?= /usr/local
 libdir ?= $(prefix)/lib
 includedir ?= $(prefix)/include
 
+ifeq ($(USE_UMP),1)
+SRC += cedrus_mem_ump.c
+CFLAGS += -DUSE_UMP
+LIBS += -lUMP
+endif
+
 DEP_CFLAGS = -MD -MP -MQ $@
 LIB_CFLAGS = -fpic -fvisibility=hidden
 LIB_LDFLAGS = -shared -Wl,-soname,$(TARGET)

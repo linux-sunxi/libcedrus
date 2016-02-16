@@ -42,6 +42,9 @@ struct cedrus_allocator
 
 struct cedrus_allocator *cedrus_allocator_ve_new(int ve_fd, const struct cedarv_env_infomation *ve_info);
 struct cedrus_allocator *cedrus_allocator_ion_new(void);
+#ifdef USE_UMP
+struct cedrus_allocator *cedrus_allocator_ump_new(void);
+#endif
 
 uint32_t phys2bus(uint32_t phys);
 uint32_t bus2phys(uint32_t bus);
