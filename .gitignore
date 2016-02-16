@@ -1,0 +1,3 @@
+*.d
+*.o
+libcedrus.so.1
