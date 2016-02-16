@@ -80,7 +80,7 @@ EXPORT struct cedrus *cedrus_open(void)
 
 	ve.version = readl(ve.regs + VE_VERSION) >> 16;
 
-	if (ve.version >= 0x1667)
+	if (ve.version >= 0x1639)
 		ve.ioctl_offset = 1;
 
 	ioctl(ve.fd, IOCTL_ENABLE_VE + ve.ioctl_offset, 0);
@@ -193,12 +193,18 @@ EXPORT uint32_t cedrus_mem_get_phys_addr(const struct cedrus_mem *mem)
 
 uint32_t phys2bus(uint32_t phys)
 {
-	return phys - 0x40000000;
+	if (ve.version == 0x1639)
+		return phys - 0x20000000;
+	else
+		return phys - 0x40000000;
 }
 
 uint32_t bus2phys(uint32_t bus)
 {
-	return bus + 0x40000000;
+	if (ve.version == 0x1639)
+		return bus + 0x20000000;
+	else
+		return bus + 0x40000000;
 }
 
 EXPORT uint32_t cedrus_mem_get_bus_addr(const struct cedrus_mem *mem)
