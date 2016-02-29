@@ -31,7 +31,7 @@ struct ion_mem
 {
 	struct cedrus_mem pub;
 
-	struct ion_handle *handle;
+	ion_user_handle_t handle;
 	int fd;
 };
 
@@ -42,22 +42,22 @@ struct ion_allocator
 	int fd;
 };
 
-static struct ion_handle *ion_alloc(int ion_fd, size_t size)
+static ion_user_handle_t ion_alloc(int ion_fd, size_t size)
 {
 	struct ion_allocation_data allocation_data = {
 		.len = size,
 		.align = 4096,
-		.heap_id_mask = ION_HEAP_TYPE_DMA,
+		.heap_id_mask = ION_HEAP_TYPE_DMA_MASK,
 		.flags = ION_FLAG_CACHED | ION_FLAG_CACHED_NEEDS_SYNC,
 	};
 
 	if (ioctl(ion_fd, ION_IOC_ALLOC, &allocation_data))
-		return NULL;
+		return 0;
 
 	return allocation_data.handle;
 }
 
-static int ion_map(int ion_fd, struct ion_handle *ion_handle)
+static int ion_map(int ion_fd, ion_user_handle_t ion_handle)
 {
 	struct ion_fd_data fd_data = {
 		.handle = ion_handle,
@@ -69,7 +69,7 @@ static int ion_map(int ion_fd, struct ion_handle *ion_handle)
 	return fd_data.fd;
 }
 
-static uint32_t ion_get_phys_addr(int ion_fd, struct ion_handle *ion_handle)
+static uint32_t ion_get_phys_addr(int ion_fd, ion_user_handle_t ion_handle)
 {
 	sunxi_phys_data phys_data = {
 		.handle = ion_handle,
@@ -104,7 +104,7 @@ static int ion_flush_cache(int ion_fd, void *addr, size_t size)
 	return 1;
 }
 
-static int ion_free(int ion_fd, struct ion_handle *ion_handle)
+static int ion_free(int ion_fd, ion_user_handle_t ion_handle)
 {
 	struct ion_handle_data handle_data = {
 		.handle = ion_handle,
