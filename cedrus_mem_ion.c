@@ -88,6 +88,8 @@ static uint32_t ion_get_phys_addr(int ion_fd, ion_user_handle_t ion_handle)
 
 static int ion_flush_cache(int ion_fd, void *addr, size_t size)
 {
+	static int new_ioctl = 0;
+
 	sunxi_cache_range cache_range = {
 		.start = (long)addr,
 		.end = (long)addr + size,
@@ -98,8 +100,13 @@ static int ion_flush_cache(int ion_fd, void *addr, size_t size)
 		.arg = (unsigned long)(&cache_range),
 	};
 
-	if (ioctl(ion_fd, ION_IOC_CUSTOM, &custom_data))
-		return 0;
+	if (new_ioctl || ioctl(ion_fd, ION_IOC_CUSTOM, &custom_data))
+	{
+		if (ioctl(ion_fd, ION_IOC_SUNXI_FLUSH_RANGE, &cache_range))
+			return 0;
+		else
+			new_ioctl = 1;
+	}
 
 	return 1;
 }
