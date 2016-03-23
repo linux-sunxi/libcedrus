@@ -108,3 +108,13 @@ struct cedrus_allocator *cedrus_allocator_ump_new(void)
 
 	return allocator;
 }
+
+__attribute__ ((visibility ("default"))) void *cedrus_mem_get_ump_handle(const struct cedrus_mem *mem_pub)
+{
+	const struct ump_mem *mem = (const struct ump_mem *)mem_pub;
+
+	if (!mem)
+		return 0x0;
+
+	return mem->handle;
+}

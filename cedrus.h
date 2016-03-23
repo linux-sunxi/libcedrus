@@ -42,5 +42,6 @@ void cedrus_mem_flush_cache(cedrus_mem_t *mem);
 void *cedrus_mem_get_pointer(const cedrus_mem_t *mem);
 uint32_t cedrus_mem_get_phys_addr(const cedrus_mem_t *mem);
 uint32_t cedrus_mem_get_bus_addr(const cedrus_mem_t *mem);
+void *cedrus_mem_get_ump_handle(const cedrus_mem_t *mem);
 
 #endif
